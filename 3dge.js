@@ -85,7 +85,29 @@ var Light = function(){};
 var World = function(size, compression){
     this.biggestX = this.biggestY = this.biggestZ = size / 2 * compression;
     this.smallestX = this.smallestY = this.smallestZ = -1 * size / 2 * compression;
+    this.objectArray = [];
+    this.addObject = function(ObjectThing){
+        objectArray.append(ObjectThing);
+    };
 };
 
-
+var Presets = function(objectType, x, y, z, r, rotationX, rotationY, rotationZ){
+    //stuff
+    if(objectType === "Cube"){
+        this.center = [x,y,z];
+        this.vertices = [
+            [x + Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
+            [x + Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
+            [x + Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
+            [x - Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
+            [x - Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
+            [x + Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
+            [x - Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
+            [x - Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)]
+            ];
+        this.edges = [
+            [this.vertices]
+        ];
+    }
+};
 
