@@ -71,9 +71,8 @@ var Camera = function(x,y,z,d,vvA,hvA,zvD, flags){
         var self = this;
         this.vr = new this.ViewRect();
     };
-    this.converObjectsInWroldTo2d(World){
-
-    }
+    this.create2dPathArray = function(World){
+    };
 
 };
 var Light = function(){};
