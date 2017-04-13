@@ -56,7 +56,13 @@ var Camera = function(x,y,z,d,vvA,hvA,zvD, flags){
             minY: this.y - this.height/2,
             maxX: this.x + this.width/2,
             maxY: this.y + this.height/2
-        };        
+        };
+        //gcd function used from: http://stackoverflow.com/questions/4652468/is-there-a-javascript-function-that-reduces-a-fraction
+       var gcd = function(a,b){
+           return b ? gcd(b, a%b) : a;
+       };
+       
+
     };
     this.vr = new this.ViewRect();
     this.moveTo = function(x,y,z){
