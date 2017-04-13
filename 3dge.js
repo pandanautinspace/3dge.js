@@ -58,10 +58,15 @@ var Camera = function(x,y,z,d,vvA,hvA,zvD, flags){
             maxY: this.y + this.height/2
         };
         //gcd function used from: http://stackoverflow.com/questions/4652468/is-there-a-javascript-function-that-reduces-a-fraction
-       var gcd = function(a,b){
+       /*var gcd = function(a,b){
            return b ? gcd(b, a%b) : a;
-       };
-       
+       };*/
+       this.slope = [this.x/this.z, this.y/this.z, 1/*this.z/this.z*/];
+       this.draw = function (world, context) {
+           var ct = context;
+           var wr = world;
+
+       }
 
     };
     this.vr = new this.ViewRect();
@@ -111,8 +116,10 @@ var Presets = function(objectType, x, y, z, r, rotationX, rotationY, rotationZ){
             [x - Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
             [x - Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)]
             ];
+            
         this.edges = [
-            [this.vertices]
+            [this.vertices[0],this.vertices[1]],
+            [this.vertices[1],]
         ];
     }
 };
