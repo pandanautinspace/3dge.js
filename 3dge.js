@@ -102,25 +102,36 @@ var World = function(size, compression){
     };
 };
 
-var Presets = function(objectType, x, y, z, r, rotationX, rotationY, rotationZ){
-    //stuff
-    if(objectType === "Cube"){
-        this.center = [x,y,z];
-        this.vertices = [
-            [x + Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
-            [x + Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
-            [x + Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
-            [x - Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
-            [x - Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
-            [x + Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
-            [x - Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
-            [x - Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)]
+var Presets = {
+    create: function(objectType, x, y, z, r, rotationX, rotationY, rotationZ){
+        //stuff
+        if(objectType === "Cube"){
+            this.center = [x,y,z];
+            this.vertices = [
+                [x + Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
+                [x + Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
+                [x + Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
+                [x - Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
+                [x - Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
+                [x + Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
+                [x - Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
+                [x - Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)]
+                ];
+                
+            this.edges = [
+                [this.vertices[0],this.vertices[1]],
+                [this.vertices[0],this.vertices[2]],
+                [this.vertices[0],this.vertices[3]],
+                [this.vertices[1],this.vertices[5]],
+                [this.vertices[2],this.vertices[5]],
+                [this.vertices[2],this.vertices[6]],
+                [this.vertices[3],this.vertices[4]],
+                [this.vertices[3],this.vertices[6]],
+                [this.vertices[4],this.vertices[7]],
+                [this.vertices[5],this.vertices[7]],
+                [this.vertices[6],this.vertices[7]]
             ];
             
-        this.edges = [
-            [this.vertices[0],this.vertices[1]],
-            [this.vertices[1],]
-        ];
-    }
+        }
 };
 
