@@ -61,8 +61,8 @@ var Camera = function(x,y,z,d,vvA,hvA,zvD, flags){
        /*var gcd = function(a,b){
            return b ? gcd(b, a%b) : a;
        };*/
-       this.slope = [this.x/this.z, this.y/this.z, 1/*this.z/this.z*/];
-       this.draw = function (world, context) {
+       this.slope = [[this.rect.minX/this.z, this.y/this.z, 1/*this.z/this.z*/]];
+       this.draw = function (tdPA, context) {
            var ct = context;
            var wr = world;
 
@@ -83,7 +83,19 @@ var Camera = function(x,y,z,d,vvA,hvA,zvD, flags){
         this.vr = new this.ViewRect();
     };
     this.create2dPathArray = function(World){
+        this.tdpa = [];
+        var vr = this.vr;
+        var woA = World.objectArray;
+        for(var i = 0; i < woA.length; i ++){
+            var currentVertices = woA[i].vertices;
+            for(var j = 0; j < currentVertices.length; j ++){
+                vr.
+            }
+        }
     };
+    this.render = function(){
+        this.vr.draw(this.tdpa);
+    }
 
 };
 var Light = function(){};
@@ -98,7 +110,7 @@ var World = function(size, compression){
     this.smallestX = this.smallestY = this.smallestZ = -1 * size / 2 * compression;
     this.objectArray = [];
     this.addObject = function(ObjectThing){
-        objectArray.append(ObjectThing);
+        this.objectArray.push(ObjectThing);
     };
 };
 
