@@ -52,21 +52,23 @@ var Camera = function(x,y,z,d,vvA,hvA,zvD, flags){
         this.z = cAng * Math.cos(self.d[2]) + sAng * Math.sin(self.d[2]);
         this.y = cAng * Math.sin(self.d[2]) + Math.cos(self.d[2]) * sAng;
         this.rect = {
+            zZ: this.z,
             minX: this.x - this.width/2,
             minY: this.y - this.height/2,
             maxX: this.x + this.width/2,
-            maxY: this.y + this.height/2
+            maxY: this.y + this.height/2,
+            get mXS(){ return this.minX/this.zZ;},
+            get mYS(){ return this.minY/this.zZ;},
+            get MXS(){ return this.maxX/this.zZ;},
+            get MYS(){ return this.maxY/this.zZ;}
         };
-        //gcd function used from: http://stackoverflow.com/questions/4652468/is-there-a-javascript-function-that-reduces-a-fraction
-       /*var gcd = function(a,b){
-           return b ? gcd(b, a%b) : a;
-       };*/
-       this.slope = [this.x/this.z, this.y/this.z, 1/*this.z/this.z*/];
+       
+       this.slope = [this.x/this.z, this.y/this.z, 1/*this.z/this.z*/]; //I don't really know what this would be useful for...
        this.draw = function (world, context) {
            var ct = context;
            var wr = world;
 
-       }
+       };
 
     };
     this.vr = new this.ViewRect();
@@ -91,47 +93,75 @@ var Light = function(){};
  * The world which everything resides in...
  * @constructor
  * @param {number} size - the Size of the world(a cube)
- * @param {number} [compression] - the number of points in a world unit, defaults to 1
+ * @param {number} [accuracy] - the number of points in a world unit, defaults to 1
  */
-var World = function(size, compression){
+var World = function(size, accuracy){
+    accuracy = (isNaN(parseInt(accuracy)) ? null : parseInt(accuracy));
+    if(typeof accuracy !== 'number'){
+        accuracy = 1;
+    }
     this.biggestX = this.biggestY = this.biggestZ = size / 2 * compression;
     this.smallestX = this.smallestY = this.smallestZ = -1 * size / 2 * compression;
     this.objectArray = [];
     this.addObject = function(ObjectThing){
         objectArray.append(ObjectThing);
     };
-};
-
-var Presets = {
-    create: function(objectType, x, y, z, r, rotationX, rotationY, rotationZ){
-        //stuff
-        if(objectType === "Cube"){
-            this.center = [x,y,z];
-            this.vertices = [
-                [x + Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
-                [x + Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
-                [x + Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
-                [x - Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
-                [x - Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
-                [x + Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
-                [x - Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
-                [x - Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)]
+    this.Presets = {
+        create: function(objectType){
+            //stuff
+            var argvs = Array.prototype.slice.call(arguments,1);
+            if(objectType === "Cube"){
+                var r = argvs[0];
+                this.center = [x,y,z];
+                this.vertices = [
+                    [x + Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
+                    [x + Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
+                    [x + Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
+                    [x - Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
+                    [x - Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
+                    [x + Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
+                    [x - Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
+                    [x - Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)]
+                    ];
+                    
+                this.edges = [
+                    [this.vertices[0],this.vertices[1]],
+                    [this.vertices[0],this.vertices[2]],
+                    [this.vertices[0],this.vertices[3]],
+                    [this.vertices[1],this.vertices[5]],
+                    [this.vertices[2],this.vertices[5]],
+                    [this.vertices[2],this.vertices[6]],
+                    [this.vertices[3],this.vertices[4]],
+                    [this.vertices[3],this.vertices[6]],
+                    [this.vertices[4],this.vertices[7]],
+                    [this.vertices[5],this.vertices[7]],
+                    [this.vertices[6],this.vertices[7]]
                 ];
-                
-            this.edges = [
-                [this.vertices[0],this.vertices[1]],
-                [this.vertices[0],this.vertices[2]],
-                [this.vertices[0],this.vertices[3]],
-                [this.vertices[1],this.vertices[5]],
-                [this.vertices[2],this.vertices[5]],
-                [this.vertices[2],this.vertices[6]],
-                [this.vertices[3],this.vertices[4]],
-                [this.vertices[3],this.vertices[6]],
-                [this.vertices[4],this.vertices[7]],
-                [this.vertices[5],this.vertices[7]],
-                [this.vertices[6],this.vertices[7]]
-            ];
-            
+                this.faces = [
+                    [this.vertices[0],this.vertices[1],this.vertices[4],this.vertices[3]],
+                    [this.vertices[6],this.vertices[3],this.vertices[4],this.vertices[7]],
+                    [this.vertices[2],this.vertices[0],this.vertices[3],this.vertices[6]],
+                    [this.vertices[0],this.vertices[2],this.vertices[5],this.vertices[1]],
+                    [this.vertices[2],this.vertices[6],this.vertices[7],this.vertices[5]],
+                    [this.vertices[1],this.vertices[5],this.vertices[7],this.vertices[4]]
+                ];
+            }
         }
+    };
 };
 
+
+/*Pseudocode for making all points in sphere:
+var sphere_points = [];
+var r2 = Math.pow(r,2);
+for(var i = x - r; i ++; i <= x + r){
+    var i2 = (Math.pow(i,2)-Math.pow(x,2));
+    for(var j = y - r; j++; j <= y + r){
+        var j2 = (Math.pow(j,2)-Math.pow(y,2));
+        if(i2+j2+k2 == r2){
+            sphere_points.append()
+        }
+    }
+}
+
+*/
