@@ -72,7 +72,7 @@ var edge = (function () {
                 get MYS(){ return this.maxY/this.zZ;}
             };
 
-        this.slope = [[this.rect.minX/this.z, this.y/this.z, 1/*this.z/this.z*/]]; //I don't really know what this would be useful for...
+        this.slope = [this.rect.minX/this.z, this.y/this.z, 1/*this.z/this.z*/]; //I don't really know what this would be useful for...
         this.draw = function (tdPA, context) {
             var ct = context;
             var wr = world;
@@ -85,12 +85,12 @@ var edge = (function () {
             this.x = x;
             this.y = y;
             this.z = z;
-            var self = this;
+            self = this;
             this.vr = new this.ViewRect();
         };
         this.rotateTo = function(xAng,yAng,zAng){
             this.d = [xAng,yAng,zAng];
-            var self = this;
+            self = this;
             this.vr = new this.ViewRect();
         };
         this.create2dPathArray = function(World){
@@ -117,6 +117,10 @@ var edge = (function () {
         };
 
     };
+    /**
+     * A light for this dark world
+     * @constructor
+     */
     var Light = function(){};
     /**
      * The world which everything resides in...
