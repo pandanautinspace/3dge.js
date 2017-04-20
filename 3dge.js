@@ -140,12 +140,15 @@ var edge = (function () {
                 //stuff
                 var argvs = Array.prototype.slice.call(arguments,1);
                 if(objectType === "Cube"){
-                    var r = argvs[0];
-                    var rot  = argvs[1];
+                    var r = argvs[1];
+                    var rot  = argvs[2];
                     var xRot = rot[0];
                     var yRot = rot[1];
                     var zRot = rot[2];
-                    this.center = [x,y,z];
+                    this.center = argvs[0];
+                    var x = this.center[0];
+                    var y = this.center[1];
+                    var z = this.center[2];
                     this.vertices = [
                         [x + r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y + Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
                         [x + Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
