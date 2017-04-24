@@ -1,3 +1,15 @@
+/**********
+ * 3dge.js
+ * Original found at github.com/knth-b/3dge.js
+ * Diagram 1 found at:
+ * 
+ */
+
+
+/**
+ * edge: a simple library for 3d rendering.
+ * Contains a Camera constructor, an unimplemented Light constructor, and a World  Constructor.
+ */
 var edge = (function () {
     'use strict';
     var qPI = Math.PI/4;
@@ -11,13 +23,13 @@ var edge = (function () {
      * @param {number} y - y Coordinate of the Camera
      * @param {number} z - z Coordinate of the Camera
      * @param {number[]} d - angular direction camera is facing, all angles are in radians.  
-     * @param {number} d[0] - rotation from x axis in y plane. 
-     * @param {number} d[1] - rotation from x axis in z plane.
-     * @param {number} d[2] - rotation from y axis in z plane.
+     * @param {number} d[0] - rotation about z axis ('x' rotation)
+     * @param {number} d[1] - rotation about x axis ('y' rotation)
+     * @param {number} d[2] - rotation about y axis (end viewing rectangle rotation)
      * @param {number} vvA - vertical viewing angle of Camera
      * @param {number} hvA - horizontal viewing angle of Camera
-     * @param {number} zvD - z directional viewing distance
-     * @param {Object} [flags] - an object with a couple flags to enable.
+     * @param {number} vD -  directional viewing distance
+     * @param {Object} [flags] - an object with a couple flags to toggle.
      */
 
     var Camera = function(x,y,z,d,vvA,hvA,zvD, flags){
@@ -28,7 +40,7 @@ var edge = (function () {
         this.d = d;
         this.vvA = vvA;
         this.hvA = hvA;
-        this.zvD = zvD;
+        this.zvD = vD;
         //make an object holding this so I can access it in other scopes.
         var self = this;
         /**
@@ -41,43 +53,85 @@ var edge = (function () {
             //initalize the point that is the center of the farthest viewing rectangle.
             this.x = self.x;
             this.y = self.y;
-            this.z = self.zvD;
-            //rotate from the x axis on the x | y plane 
-            var ang = Math.atan(this.y/this.x);
-            var cAng = Math.cos(ang);
-            var sAng = Math.sin(ang);
-            this.x = cAng*Math.cos(self.d[0])+sAng*Math.sin(self.d[0]);
-            this.y  = cAng*Math.sin(self.d[0])+Math.cos(self.d[0])*sAng;
-            //rotate from the x axis on the x | z plane
-            ang = Math.atan(this.z/this.x);
-            cAng = Math.cos(ang);
-            sAng = Math.sin(ang);
-            this.x = cAng*Math.cos(self.d[1]) + sAng*Math.sin(self.d[1]);
-            this.z = cAng*Math.sin(self.d[1])+Math.cos(self.d[1])*sAng;
-            //rotate from the z axis on the z | y plane
-            ang = Math.atan(this.y/this.z);
-            cAng = Math.cos(ang);
-            sAng = Math.sin(ang);
-            this.z = cAng * Math.cos(self.d[2]) + sAng * Math.sin(self.d[2]);
-            this.y = cAng * Math.sin(self.d[2]) + Math.cos(self.d[2]) * sAng;
+            this.z = self.z;
+            this.hAngle = hPI + d[0];
+            this.vAngle = hPI + d[1];
+            this.aAngle = d[3];
+            var cosHAngle = Math.cos(this.hAngle);
+            var sinHAngle = Math.sin(this.hAngle);
+            var cosVAngle = Math.cos(this.vAngle);
+            var sinVAngle = Math.sin(this.vAngle);
+            var cosAAngle = Math.cos(this.aAngle);
+            var sinAAngle = Math.sin(this.aAngle);
+            this.x = this.x + self.vD * cos(hAngle) * sin(vAngle);
+            this.y = this.y + self.vD * sin(hAngle) * sin(vAngle);
+            this.z = this.z + self.vD * cos(vAngle);
+            this.vrVector = [ (this.x - self.x) / (this.y - self.y), (this.z - self.z) / (this.y - self.y)];
+            this.rectVector = [ -1 / this.vrVector[0], -1 / this.vrVector[1]];
             this.rect = {
                 zZ: this.z,
-                minX: this.x - this.width/2,
-                minY: this.y - this.height/2,
-                maxX: this.x + this.width/2,
-                maxY: this.y + this.height/2,
+                minX: -this.width/2,
+                minY: -this.height/2,
+                maxX: this.width/2,
+                maxY: thisthis.height/2,
                 get mXS(){ return this.minX/this.zZ;},
                 get mYS(){ return this.minY/this.zZ;},
                 get MXS(){ return this.maxX/this.zZ;},
                 get MYS(){ return this.maxY/this.zZ;}
             };
+            this.get2dPathArray = function(World){
+                var tdpa = [];
+                var woA = World.objectArray;
+                //iterate through every object in the world Array
+                for(var i = 0; i < woA.length; i ++){
+                    var currentVertices = woA[i].vertices;
+                    //iterate through all the vertices
+                    var thisObs2dPathArray = [];
+                    for(var j = 0; j < currentVertices.length; j ++){
+                        var cV /*ertex*/  =currentVertices[j];
+                        var a = cV[0];
+                        var b  = cV[1];
+                        var c = cV[2];
+                        //see diagram 1 to see angle naming
+                        var dist = Math.sqrt( (a - self.x) * (a - self.x) + (b - self.y) * (b - self.y) + (c - self.z)*(c - self.z));
+                        var cosTheta = (c - self.z) / dist;
+                        var sinTheta = Math.sin(Math.acos(cosTheta));
+                        var sinBeta = (b - self.y) / (dist * sinTheta);
+                        var cosBeta = (a - self.x) / (dist * sinTheta);
+                        //Rotating the vertex to align with the camera's view. Rotated about y-axis by this.hAngle radians, and about x-axis by this.vAngle radians.
+                        //sin(a+b) = sin(a)*cos(b) + cos(a) * sin(b):
+                        //cos(a+b) = cos(a)*cos(b) - sin(a) * sin(b):
+                    
+                        var sinBetaPlusHAngle = sinBeta * cosHAngle + cosBeta * sinHAngle;
+                        var cosBetaPlusHAngle = cosBeta * cosHAngle - sinBeta * sinHAngle;
+                        var sinThetaPlusVAngle = sinTheta * cosVAngle + cosTheta * sinVAngle;
+                        var cosThetaPlusVangle = cosTheta * cosVAngle - sinTheta * sinVAngle;
+                        var tV = [ //tV = transformed Vertex, shortened for easier typing
+                            self.x + dist * cosBetaPlusHAngle * sinThetaPlusVAngle,
+                            self.y + dist * sinBetaPlusHAngle * sinThetaPlusVAngle,
+                            self.z + dist * cosThetaPlusVangle ];
+                        var newDist = Math.sqrt((tV[0] - this.x)*(tV[0] - this.x)+(tV[1] - this.y)*(tV[1] - this.y));
+                        var sinAlpha = tV[0] / newDist;
+                        var cosAlpha = tV[1] / newDist;
+                        var sinAlphaPlusAAngle = sinAlpha * cosAAngle + cosAlpha * sinAAngle;
+                        var cosAlphaPlusAAngle = cosAlpha * cosAAngle - sinAlpha * sinAAngle;
+                        tV[0] = newDist * cosAlphaPlusAAngle;
+                        tV[1] = newDist * sinAlphaPlusAAngle;
+                        var vrmx = tV[2]*this.rect.mXS;
+                        var vrmy = tV[2]*this.rect.mYS;
+                        thisObs2dPathArray.push([tV[0]-vrmx,tV[1]-vrmy]);
+                    }
+                    tdpa.push([thisObs2dPathArray, woA[i].center[2]]);
+                }
+                return tdpa;
+            };
 
-        this.slope = [this.rect.minX/this.z, this.y/this.z, 1/*this.z/this.z*/]; //I don't really know what this would be useful for...
-        this.draw = function (tdPA, context) {
-            var ct = context;
-            var wr = world;
+            this.slope = [this.rect.minX/this.z, this.y/this.z, 1/*this.z/this.z*/]; //I don't really know what this would be useful for...
+            this.draw = function (tdPA, context) {
+                var ct = context;
+                var wr = world;
 
-        };
+            };
 
         };
         this.vr = new this.ViewRect();
@@ -93,25 +147,7 @@ var edge = (function () {
             self = this;
             this.vr = new this.ViewRect();
         };
-        this.create2dPathArray = function(World){
-            this.tdpa = [];
-            var vr = this.vr;
-            var woA = World.objectArray;
-            //iterate through every object in the world Array
-            for(var i = 0; i < woA.length; i ++){
-                var currentVertices = woA[i].vertices;
-                //iterate through all the vertices
-                var thisObs2dPathArray = [];
-                for(var j = 0; j < currentVertices.length; j ++){
-                    var cVertex  =currentVertices[j];
-                    var cvZ = cVertex[2];
-                    var vrmx = cvZ*vr.rect.mXS;
-                    var vrmy = cvZ*vr.rect.mYS;
-                    thisObs2dPathArray.push([cVertex[0]-vrmx,cVertex[1]-vrmy]);
-                }
-                this.tdpa.push(thisObs2dPathArray);
-            }
-        };
+        
         this.render = function(){
             this.vr.draw(this.tdpa);
         };
@@ -190,12 +226,11 @@ var edge = (function () {
             }
         };
     };
-    var reallyPointlessTemporaryObjectUsedToComplyWithLinterAndGivenAReallyLongVariableNameInCamelCaseBecauseWhyNotAndIHaveAutocompleteSoItDoesntMatterAnyway =  {
+    return {
         Camera: Camera,
         Light: Light,
         World: World
     };
-    return reallyPointlessTemporaryObjectUsedToComplyWithLinterAndGivenAReallyLongVariableNameInCamelCaseBecauseWhyNotAndIHaveAutocompleteSoItDoesntMatterAnyway;
 })();
 
 /*Pseudocode for making all points in sphere:
