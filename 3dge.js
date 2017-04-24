@@ -119,7 +119,7 @@ var edge = (function () {
                         tV[1] = newDist * sinAlphaPlusAAngle;
                         var vrmx = tV[2]*this.rect.mXS;
                         var vrmy = tV[2]*this.rect.mYS;
-                        thisObs2dPathArray.push([tV[0]-vrmx,tV[1]-vrmy]);
+                        thisObs2dPathArray.push([tV[0]-vrmx,tV[1]-vrmy, tV[2]]);
                     }
                     tdpa.push(thisObs2dPathArray);
                 }
@@ -142,12 +142,12 @@ var edge = (function () {
                     for (var j = 0; j < wr.objectArray[i].faces.length; j ++){
                         var currentFace = wr.objectArray.faces[j];
                         var current2dObj = tdpa[j];
-                        var current3dObj = wr.objectArray[i];
+                        //var current3dObj = wr.objectArray[i];
                         var runningSum = 0;
                         var subArray = [];
                         for (var k = 0; k < currentFace.length; k++){
                             subArray.push([current2dObj[currentFace[k]][0],current2dObj[currentFace[k]][1]]);
-                            runningSum += current3dObj.vertices[currentFace[k]][3];
+                            runningSum += current2dObj[currentFace[k]][3];
                         }
                         unprioritizedArray.push([subArray, runningSum / k]);
                     }
