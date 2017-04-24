@@ -40,7 +40,7 @@ var edge = (function () {
         this.d = d;
         this.vvA = vvA;
         this.hvA = hvA;
-        this.zvD = vD;
+        this.zvD = zvD;
         //make an object holding this so I can access it in other scopes.
         var self = this;
         /**
@@ -63,9 +63,9 @@ var edge = (function () {
             var sinVAngle = Math.sin(this.vAngle);
             var cosAAngle = Math.cos(this.aAngle);
             var sinAAngle = Math.sin(this.aAngle);
-            this.x = this.x + self.vD * cos(hAngle) * sin(vAngle);
-            this.y = this.y + self.vD * sin(hAngle) * sin(vAngle);
-            this.z = this.z + self.vD * cos(vAngle);
+            this.x = this.x + self.vD * Math.cos(this.hAngle) * Math.sin(this.vAngle);
+            this.y = this.y + self.vD * Math.sin(this.hAngle) * Math.sin(this.vAngle);
+            this.z = this.z + self.vD * Math.cos(this.vAngle);
             this.vrVector = [ (this.x - self.x) / (this.y - self.y), (this.z - self.z) / (this.y - self.y)];
             this.rectVector = [ -1 / this.vrVector[0], -1 / this.vrVector[1]];
             this.rect = {
@@ -73,15 +73,15 @@ var edge = (function () {
                 minX: -this.width/2,
                 minY: -this.height/2,
                 maxX: this.width/2,
-                maxY: thisthis.height/2,
+                maxY: this.height/2,
                 get mXS(){ return this.minX/this.zZ;},
                 get mYS(){ return this.minY/this.zZ;},
                 get MXS(){ return this.maxX/this.zZ;},
                 get MYS(){ return this.maxY/this.zZ;}
             };
-            this.get2dPathArray = function(World){
+            this.get2dPathArray = function(wor){
                 var tdpa = [];
-                var woA = World.objectArray;
+                var woA = wor.objectArray;
                 //iterate through every object in the world Array
                 for(var i = 0; i < woA.length; i ++){
                     var currentVertices = woA[i].vertices;
@@ -138,14 +138,19 @@ var edge = (function () {
                 */
                 //go through the objects in the World. Draw them with individual paths.
                 var unprioritizedArray = [];
+                console.log(wr.objectArray);
                 for (var i = 0; i < wr.objectArray.length; i ++){
                     for (var j = 0; j < wr.objectArray[i].faces.length; j ++){
-                        var currentFace = wr.objectArray.faces[j];
+                        var currentFace = wr.objectArray[i].faces[j];
                         var current2dObj = tdpa[j];
                         //var current3dObj = wr.objectArray[i];
                         var runningSum = 0;
                         var subArray = [];
+                        console.log("J IS", j);
+                        console.log("Current Face is", currentFace);
                         for (var k = 0; k < currentFace.length; k++){
+                            console.log(k + "CURFACE" + currentFace[k]);
+                            console.log(current2dObj[currentFace[k]]);
                             subArray.push([current2dObj[currentFace[k]][0],current2dObj[currentFace[k]][1]]);
                             runningSum += current2dObj[currentFace[k]][3];
                         }
@@ -184,8 +189,8 @@ var edge = (function () {
             this.vr = new this.ViewRect();
         };
         
-        this.render = function(){
-            this.vr.draw(this.tdpa);
+        this.render = function(World, Context){
+            this.vr.draw(World, Context);
         };
 
     };
@@ -205,8 +210,8 @@ var edge = (function () {
         if(typeof accuracy !== 'number'){
             accuracy = 1;
         }
-        this.biggestX = this.biggestY = this.biggestZ = size / 2 * compression;
-        this.smallestX = this.smallestY = this.smallestZ = -1 * size / 2 * compression;
+        this.biggestX = this.biggestY = this.biggestZ = size / 2 * accuracy;
+        this.smallestX = this.smallestY = this.smallestZ = -1 * size / 2 * accuracy;
         this.objectArray = [];
         this.addObject = function(ObjectThing){
             this.objectArray.push(ObjectThing);
@@ -219,21 +224,20 @@ var edge = (function () {
                     var r = argvs[1];
                     var rot  = argvs[2];
                     var xRot = rot[0];
-                    var yRot = rot[1];
-                    var zRot = rot[2];
+                    var zRot = rot[1];
                     this.center = argvs[0];
                     var x = this.center[0];
                     var y = this.center[1];
                     var z = this.center[2];
                     this.vertices = [
-                        [x + r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y + Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
-                        [x + Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
-                        [x + Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
-                        [x - Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
-                        [x - Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z + Math.sqrt(Math.pow(r, 2) / 3)],
-                        [x + Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
-                        [x - Math.sqrt(Math.pow(r, 2) / 3), y + Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)],
-                        [x - Math.sqrt(Math.pow(r, 2) / 3), y - Math.sqrt(Math.pow(r, 2) / 3), z - Math.sqrt(Math.pow(r, 2) / 3)]
+                        [x + r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y + r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z + r * Math.cos(qPI + zRot)],
+                        [x + r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y - r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z + r * Math.cos(qPI + zRot)],
+                        [x + r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y + r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z - r * Math.cos(qPI + zRot)],
+                        [x - r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y + r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z + r * Math.cos(qPI + zRot)],
+                        [x - r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y - r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z + r * Math.cos(qPI + zRot)],
+                        [x + r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y - r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z - r * Math.cos(qPI + zRot)],
+                        [x - r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y + r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z - r * Math.cos(qPI + zRot)],
+                        [x - r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y - r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z - r * Math.cos(qPI + zRot)]
                         ];
                         
                     this.edges = [
