@@ -121,16 +121,52 @@ var edge = (function () {
                         var vrmy = tV[2]*this.rect.mYS;
                         thisObs2dPathArray.push([tV[0]-vrmx,tV[1]-vrmy]);
                     }
-                    tdpa.push([thisObs2dPathArray, woA[i].center[2]]);
+                    tdpa.push(thisObs2dPathArray);
                 }
                 return tdpa;
             };
 
             this.slope = [this.rect.minX/this.z, this.y/this.z, 1/*this.z/this.z*/]; //I don't really know what this would be useful for...
-            this.draw = function (tdPA, context) {
+            this.draw = function (world, context) {
                 var ct = context;
                 var wr = world;
-
+                var tdpa = this.get2dPathArray(wr);
+                /*
+                tdpa = tdpa.sort(function(a, b){
+                    return b[1] - a[1];
+                });
+                */
+                //go through the objects in the World. Draw them with individual paths.
+                var unprioritizedArray = [];
+                for (var i = 0; i < wr.objectArray.length; i ++){
+                    for (var j = 0; j < wr.objectArray[i].faces.length; j ++){
+                        var currentFace = wr.objectArray.faces[j];
+                        var current2dObj = tdpa[j];
+                        var current3dObj = wr.objectArray[i];
+                        var runningSum = 0;
+                        var subArray = [];
+                        for (var k = 0; k < currentFace.length; k++){
+                            subArray.push([current2dObj[currentFace[k]][0],current2dObj[currentFace[k]][1]]);
+                            runningSum += current3dObj.vertices[currentFace[k]][3];
+                        }
+                        unprioritizedArray.push([subArray, runningSum / k]);
+                    }
+                }
+                //prioritize the array by sorting backwards by z values:
+                var prioritizedArray = unprioritizedArray.sort(function(a,b){
+                    return b[1] - a[1];
+                });
+                var pArrayWithPrioritiesRemoved = prioritizedArray.map(function(item){return item[0];});
+                for (i = 0; i < pArrayWithPrioritiesRemoved.length; i ++){
+                    ct.beginPath();
+                    var current2dFace = pArrayWithPrioritiesRemoved[i];
+                    ct.moveTo(current2dFace[0][0],current2dFace[0][0]);
+                    for(var j = 0, l = current2dFace.length; j < l; j ++){
+                        var k = (j + 1) % l;
+                        ct.lineTo(current2dFace[k][0],current2dFace[k][1]);
+                    }
+                    ct.fill();
+                }
             };
 
         };
