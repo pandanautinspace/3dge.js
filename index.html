@@ -9,7 +9,7 @@
         </script>
     </head>
     <body>  
-        <canvas id="myCanvas" width="400" height="400"></canvas>
+        <canvas id="myCanvas" width="500" height="500"></canvas>
         <div id="log"></div>
         <script>
             var myWorld = new edge.World(100);
@@ -19,13 +19,15 @@
                 y: 0,
                 z: 0
             };
-            var myCamera = new edge.Camera(500,cam.y,cam.z,[0,0,0],Math.PI * 2 / 3, Math.PI * 2 / 3,100);
-            var Cube = new myWorld.Presets.create("Cube", [10,10,15],4,[0,0]);
+            var myCamera = new edge.Camera(cam.x,cam.y,700,[0,0,0],Math.PI / 2, Math.PI / 2 ,100);
+            var Cube = new myWorld.Presets.create("Cube", [5,0,15],3,[0,0]);
+            var Cube2 = new myWorld.Presets.create("Cube", [5,0,20],7,[0,0]);
             var myCanvas = document.getElementById("myCanvas");
             var ctx = myCanvas.getContext("2d");
             console.log(myWorld.objectArray);
             console.log(Cube);
             myWorld.addObject(Cube);
+            myWorld.addObject(Cube2);
             myCamera.render(myWorld, myCanvas, ctx);
             document.addEventListener("keypress", function(e){
                 console.log("This key is", e.key);

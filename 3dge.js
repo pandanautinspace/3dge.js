@@ -61,7 +61,7 @@ var edge = (function () {
             this.x = self.x;
             this.y = self.y;
             this.z = self.z;
-            console.log("The D is", d);
+            //console.log("The D is", d);
             this.hAngle = d[0];
             this.vAngle = d[1];
             this.aAngle = d[2];
@@ -198,7 +198,7 @@ var edge = (function () {
                 for (i = 0; i < pArrayWithPrioritiesRemoved.length; i ++){
                     ct.beginPath();
                     var current2dFace = pArrayWithPrioritiesRemoved[i];
-                    //ct.fillStyle = 'rgb('+Math.floor(Math.random()*256)+','+Math.floor(Math.random()*256)+','+Math.floor(Math.random()*256)+')';
+                    ct.fillStyle = 'rgb('+Math.floor(Math.random()*256)+','+Math.floor(Math.random()*256)+','+Math.floor(Math.random()*256)+')';
                     //window.confirm("About to do " + current2dFace)
                     ct.moveTo(current2dFace[0][0],current2dFace[0][1]);
                     //ct.fillRect(current2dFace[0][0],current2dFace[0][1],10,10);
