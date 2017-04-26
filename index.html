@@ -14,13 +14,13 @@
         <script>
             var myWorld = new edge.World(100);
             var log = document.getElementById("log");
-            var cam = {
-                x: 0,
+            var cub = {
+                x: 5,
                 y: 0,
-                z: 0
+                z: 15
             };
             var myCamera = new edge.Camera(cam.x,cam.y,700,[0,0,0],Math.PI / 2, Math.PI / 2 ,100);
-            var Cube = new myWorld.Presets.create("Cube", [5,0,15],3,[0,0]);
+            var Cube = new myWorld.Presets.create("Cube", [cub.x,cub.y,cub.z],3,[0,0]);
             var Cube2 = new myWorld.Presets.create("Cube", [5,0,20],7,[0,0]);
             var myCanvas = document.getElementById("myCanvas");
             var ctx = myCanvas.getContext("2d");
@@ -32,21 +32,21 @@
             document.addEventListener("keypress", function(e){
                 console.log("This key is", e.key);
                 if(e.key == "d"){
-                    cam.x += 1;
+                    cub.x += 1;
                 }else if(e.key == "a"){
-                    cam.x -= 1;
+                    cub.x -= 1;
                 }else if(e.key == "w"){
-                    cam.z += 1;
+                    cub.z += 1;
                 }else if(e.key == "s"){
-                    cam.z -= 1;
+                    cub.z -= 1;
                 }else if(e.key = "Shift"){
-                    cam.y -= 1;
+                    cub.y -= 1;
                 }else if(e.key = " "){
-                    cam.y += 1;
+                    cub.y += 1;
                 }
-                myCamera.moveTo(cam.x,cam.y,cam.z);
+                Cube.moveTo(cub.x,cub.y,cub.z);
                 myCamera.render(myWorld, myCanvas, ctx);
-                log.innerHTML = ""+cam.x+','+cam.y+","+cam.z;
+                log.innerHTML = ""+cub.x+','+cub.y+","+cub.z;
             }, true);
         </script>
 </html>
