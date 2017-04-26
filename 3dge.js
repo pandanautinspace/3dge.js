@@ -311,6 +311,22 @@ var edge = (function () {
                         [6,3,0,2],
                         [2,6,7,5]
                     ];
+                    this.moveTo = function(a,b,c){
+                        this.center = [a,b,c];
+                        var x = this.center[0];
+                        var y = this.center[1];
+                        var z = this.center[2];
+                        this.vertices = [
+                            [x + r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y + r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z + r * Math.cos(qPI + zRot)],
+                            [x + r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y - r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z + r * Math.cos(qPI + zRot)],
+                            [x + r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y + r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z - r * Math.cos(qPI + zRot)],
+                            [x - r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y + r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z + r * Math.cos(qPI + zRot)],
+                            [x - r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y - r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z + r * Math.cos(qPI + zRot)],
+                            [x + r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y - r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z - r * Math.cos(qPI + zRot)],
+                            [x - r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y + r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z - r * Math.cos(qPI + zRot)],
+                            [x - r * Math.cos(qPI + xRot) * Math.sin(qPI + zRot), y - r * Math.sin(qPI + xRot) * Math.sin(qPI + zRot), z - r * Math.cos(qPI + zRot)]
+                            ];
+                    };
                 }
             }
         };
