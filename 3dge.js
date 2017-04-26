@@ -91,7 +91,7 @@ var edge = (function () {
                 get MYS(){ return this.maxY/this.zZ;}
             };
             this.get2dPathArray = function(wor, canvas){
-                console.log(this.rect);
+                //console.log(this.rect);
                 var tdpa = [];
                 var woA = wor.objectArray;
                 //iterate through every object in the world Array
@@ -153,6 +153,7 @@ var edge = (function () {
             this.slope = [this.rect.minX/this.z, this.y/this.z, 1/*this.z/this.z*/]; //I don't really know what this would be useful for...
             this.draw = function (world, canvas, context) {
                 var ct = context;
+                ct.clearRect(0,0,canvas.width,canvas.height);
                 var wr = world;
                 var tdpa = this.get2dPathArray(wr, canvas);
                 /*
@@ -189,30 +190,36 @@ var edge = (function () {
                 console.log(unprioritizedArray);
                 //prioritize the array by sorting backwards by z values:
                 var prioritizedArray = unprioritizedArray.sort(function(a,b){
-                    //return b[1] - a[1];
-                    return a[1] - b[1];
+                    return b[1] - a[1];
+                    //return a[1] - b[1];
                 });
                 console.log(prioritizedArray);
                 var pArrayWithPrioritiesRemoved = prioritizedArray.map(function(item){return item[0];});
                 for (i = 0; i < pArrayWithPrioritiesRemoved.length; i ++){
                     ct.beginPath();
                     var current2dFace = pArrayWithPrioritiesRemoved[i];
-                    ct.fillStyle = 'rgb('+Math.floor(Math.random()*256)+','+Math.floor(Math.random()*256)+','+Math.floor(Math.random()*256)+')';
-                    ct.moveTo(current2dFace[0][0],current2dFace[0][0]);
-                    console.log("Moved to",current2dFace[0][0],current2dFace[0][0]);
-                    for(var j = 1, l = current2dFace.length; j < l; j ++){
-                        //var k = (j + 1) % l;
-                        var k = j;
+                    //ct.fillStyle = 'rgb('+Math.floor(Math.random()*256)+','+Math.floor(Math.random()*256)+','+Math.floor(Math.random()*256)+')';
+                    //window.confirm("About to do " + current2dFace)
+                    ct.moveTo(current2dFace[0][0],current2dFace[0][1]);
+                    //ct.fillRect(current2dFace[0][0],current2dFace[0][1],10,10);
+                    //window.confirm("Did a point " + current2dFace[0][0]+','+current2dFace[0][1]);
+                    console.log("Moved to",current2dFace[0][0],current2dFace[0][1]);
+                    for(var j = 0, l = current2dFace.length; j < l; j ++){
+                        var k = (j + 1) % l;
+                        //var k = j;
                         ct.lineTo(current2dFace[k][0],current2dFace[k][1]);
-                        console.log("Drew line to:",current2dFace[k][0],current2dFace[k][1])
-                        //window.confirm("PAUSE");
+                        console.log("Drew line to:",current2dFace[k][0],current2dFace[k][1]);
+                        //ct.fillRect(current2dFace[k][0],current2dFace[k][1],5,5);
+                        //window.confirm("Did a point");
                     }
-                    ct.lineTo(current2dFace[0][0],current2dFace[0][0]);
+                    //ct.lineTo(current2dFace[0][0],current2dFace[0][0]);
                     ct.fill();
-                    window.confirm("Finished Step "+i);
+                    //window.confirm("Finished Step "+i);
                     console.log("Finsihed!");
-                    ct.closePath();
+                    //ct.closePath();
                 }
+                //window.confirm('DID SOMETHING COOL');
+                
             };
 
         };
@@ -298,11 +305,11 @@ var edge = (function () {
                     ];
                     this.faces = [
                         [0,1,4,3],
-                        [6,3,4,7],
-                        [2,0,3,6],
                         [0,2,5,1],
-                        [2,6,7,5],
-                        [1,5,7,4]
+                        [1,5,7,4],
+                        [6,7,4,3],
+                        [6,3,0,2],
+                        [2,6,7,5]
                     ];
                 }
             }
