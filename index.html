@@ -14,7 +14,7 @@
         </style>
     </head>
     <body>  
-        Move cube with W A S D
+        Move cube with W A S D, forward and back with R and V
         <canvas id="myCanvas" width="500" height="500"></canvas>
         <div id="log"></div>
         <script>
@@ -45,16 +45,16 @@
                         cub.y -= 1;
                         break;
                     case "w":
-                        cub.z += 1;
-                        break;
-                    case "s":
-                        cub.z -= 1;
-                        break;
-                    case "r":
                         cub.x -= 1;
                         break;
-                    case "v":
+                    case "s":
                         cub.x += 1;
+                        break;
+                    case "r":
+                        cub.z += 1;
+                        break;
+                    case "v":
+                        cub.z -= 1;
                         break;
                 }
                 Cube.moveTo(cub.x,cub.y,cub.z);
