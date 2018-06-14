@@ -37,18 +37,25 @@
             myCamera.render(myWorld, myCanvas, ctx);
             document.addEventListener("keypress", function(e){
                 console.log("This key is", e.key);
-                if(e.key == "d"){
-                    cub.y += 1;
-                }else if(e.key == "a"){
-                    cub.y -= 1;
-                }else if(e.key == "w"){
-                    cub.z += 1;
-                }else if(e.key == "s"){
-                    cub.z -= 1;
-                }else if(e.key = "r"){
-                    cub.x -= 1;
-                }else if(e.key = "v"){
-                    cub.x -= 1;
+                switch(e.key){
+                    case "d":
+                        cub.y += 1;
+                        break;
+                    case "a":
+                        cub.y -= 1;
+                        break;
+                    case "w":
+                        cub.z += 1;
+                        break;
+                    case "s":
+                        cub.z -= 1;
+                        break;
+                    case "r":
+                        cub.x -= 1;
+                        break;
+                    case "v":
+                        cub.x += 1;
+                        break;
                 }
                 Cube.moveTo(cub.x,cub.y,cub.z);
                 myCamera.render(myWorld, myCanvas, ctx);
